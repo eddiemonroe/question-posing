@@ -8,12 +8,13 @@
 	(opencog nlp chatbot)
 	(opencog nlp relex2logic)
 	(opencog nlp sureal)
+	(srfi srfi-1) ; needed for delete-duplicates
 )
 
 ; -----------------------------------------------------------------------
-; Todo: handle muliple relations of the same type
-; Get the relex relations of a given relationship type
 (define (parse-get-relex-relation-type parse rel-type)
+; Get the relex relations of a given relationship type
+; Todo: handle muliple relations of the same type
   (define gl
     (GetLink
       ; Defining type here to avoid returning VariableNodes
@@ -70,17 +71,36 @@
 	    (gdr verb-obj))))
 
 ; Todo: Handle multiple verbs
-(define (parse-get-verb parse)
-  (gar
-    (cog-execute!
-      (BindLink
-        (And
-          (PartOfSpeechLink
-            (VariableNode "$word-instance-verb")
-            (DefinedLinguisticConceptNode "verb"))
-          (WordInstanceLink (VariableNode "$word-instance-verb") parse))
-        (VariableNode "$word-instance-verb")))))
+(define (parse-get-verb-word parse)
+  (word-inst-get-lemma
+    (gar
+      (cog-execute!
+        (BindLink
+          (And
+            (PartOfSpeechLink
+              (VariableNode "$word-instance-verb")
+              (DefinedLinguisticConceptNode "verb"))
+            (WordInstanceLink (VariableNode "$word-instance-verb") parse))
+          (VariableNode "$word-instance-verb"))))))
 
+(define (parse-get-relex-relation-words parse)
+  ; Not sure whether we should use Words or Lemmas here
+  ; Using lemmas
+  (map word-inst-get-lemma
+    (map relation-get-dependent (parse-get-relex-relations parse))
+  )
+)
+
+(define (parse-get-key-words parse)
+  (map cog-name
+    (delete-duplicates
+      (append
+        (list (parse-get-verb-word parse))
+        (parse-get-relex-relation-words parse)
+      )
+    )
+  )
+)
 
 ; -----------------------------------------------------------------------
 ; Utilities
@@ -105,10 +125,11 @@
 (define gsubj-rel)
 (define gobj-rel)
 (define gobj)
-(define gpobj)
+(define gpobj-rel)
+(define gkey-words)
 
 ; -----------------------------------------------------------------------
-(define (qp text)
+(define (qp-parse text)
 
   ; Todo: Handle multiple sentences? Not sure if parser returns multiples.
   (define sent (car (nlp-parse text)))
@@ -125,7 +146,7 @@
   (define r2l (sent-get-r2l-outputs sent))
   ;r2l
 
-  (define verb (parse-get-verb parse))
+  (define verb (parse-get-verb-word parse))
 
   (define subj-rel (parse-get-subj-relation parse))
 
@@ -134,6 +155,10 @@
   (define obj (parse-get-obj parse))
 
   (define pobj-rel (parse-get-relex-relation-type parse "_pobj"))
+
+  ; Todo: add iobj
+
+  (define key-words (parse-get-key-words parse))
 
  ; Temp for debugging
  (set! gsent sent)
@@ -146,8 +171,10 @@
  (set! gobj-rel obj-rel)
  (set! gobj obj)
  (set! gpobj-rel pobj-rel)
- 
- subj-rel
+ (set! gkey-words key-words)
+
+  ; subj-rel
+  key-words
 
 )
 
