@@ -70,18 +70,29 @@
 	    '()
 	    (gdr verb-obj))))
 
+(define (parse-get-verbs parse)
+ (cog-execute!
+   (BindLink
+     (And
+       (PartOfSpeechLink
+         (VariableNode "$word-instance-verb")
+         (DefinedLinguisticConceptNode "verb"))
+       (WordInstanceLink (VariableNode "$word-instance-verb") parse))
+     (VariableNode "$word-instance-verb"))))
+
 ; Todo: Handle multiple verbs
 (define (parse-get-verb-word parse)
   (word-inst-get-lemma
     (gar
-      (cog-execute!
-        (BindLink
-          (And
-            (PartOfSpeechLink
-              (VariableNode "$word-instance-verb")
-              (DefinedLinguisticConceptNode "verb"))
-            (WordInstanceLink (VariableNode "$word-instance-verb") parse))
-          (VariableNode "$word-instance-verb"))))))
+      (parse-get-verbs parse))))
+;      (cog-execute!
+;        (BindLink
+;          (And
+;            (PartOfSpeechLink
+;              (VariableNode "$word-instance-verb")
+;              (DefinedLinguisticConceptNode "verb"))
+;            (WordInstanceLink (VariableNode "$word-instance-verb") parse))
+;          (VariableNode "$word-instance-verb"))))))
 
 (define (parse-get-relex-relation-words parse)
   ; Not sure whether we should use Words or Lemmas here
@@ -121,6 +132,7 @@
 (define grelex)
 (define grelations)
 (define gr2l)
+(define gverbs)
 (define gverb)
 (define gsubj-rel)
 (define gobj-rel)
@@ -146,6 +158,7 @@
   (define r2l (sent-get-r2l-outputs sent))
   ;r2l
 
+ (define verbs (parse-get-verbs parse))
   (define verb (parse-get-verb-word parse))
 
   (define subj-rel (parse-get-subj-relation parse))
@@ -166,6 +179,7 @@
  (set! grelex relex)
  (set! grelations relations)
  (set! gr2l r2l)
+ (set! gverbs verbs)
  (set! gverb verb)
  (set! gsubj-rel subj-rel)
  (set! gobj-rel obj-rel)
@@ -174,7 +188,10 @@
  (set! gkey-words key-words)
 
   ; subj-rel
-  key-words
+  ;key-words
+
+ (display "r2l:\n")
+ r2l
 
 )
 
