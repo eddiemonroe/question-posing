@@ -95,19 +95,23 @@
 ;          (VariableNode "$word-instance-verb"))))))
 
 (define (parse-get-relex-relation-words parse)
-  ; Not sure whether we should use Words or Lemmas here
-  ; Using lemmas
-  (map word-inst-get-lemma
-    (map relation-get-dependent (parse-get-relex-relations parse))
+ ; Not sure whether we should use Words or Lemmas here
+ ; Using lemmas
+  (delete '()
+    (map word-inst-get-lemma
+      (map relation-get-dependent (parse-get-relex-relations parse))
+    )
   )
 )
 
 (define (parse-get-key-words parse)
   (map cog-name
-    (delete-duplicates
-      (append
-        (list (parse-get-verb-word parse))
-        (parse-get-relex-relation-words parse)
+     (delete '()
+      (delete-duplicates
+        (append
+          (list (parse-get-verb-word parse))
+          (parse-get-relex-relation-words parse)
+        )
       )
     )
   )
@@ -129,6 +133,8 @@
 ; Temp define top level global vars to use for easier debugging
 (define gsent)
 (define gparse)
+(define gsent)
+(define gabstract)
 (define grelex)
 (define grelations)
 (define gr2l)
@@ -150,15 +156,20 @@
   ; Todo: Use multiple parses, if parser returns multiple
   (define parse (car (sentence-get-parses sent)))
 
+  ; use just the first one for now
+  (define interp (car (sent-get-interp sent)))
+
+  (define abstract (get-abstract-version interp))
+
   (define relex (parse-get-relex-outputs parse))
   ; relex
 
-  (define relations(parse-get-relex-relations parse))
+  (define relations (parse-get-relex-relations parse))
 
   (define r2l (sent-get-r2l-outputs sent))
   ;r2l
 
- (define verbs (parse-get-verbs parse))
+  (define verbs (parse-get-verbs parse))
   (define verb (parse-get-verb-word parse))
 
   (define subj-rel (parse-get-subj-relation parse))
@@ -173,29 +184,46 @@
 
   (define key-words (parse-get-key-words parse))
 
- ; Temp for debugging
- (set! gsent sent)
- (set! gparse parse)
- (set! grelex relex)
- (set! grelations relations)
- (set! gr2l r2l)
- (set! gverbs verbs)
- (set! gverb verb)
- (set! gsubj-rel subj-rel)
- (set! gobj-rel obj-rel)
- (set! gobj obj)
- (set! gpobj-rel pobj-rel)
- (set! gkey-words key-words)
+  ; Temp for debugging
+  (set! gsent sent)
+  (set! gparse parse)
+  (set! grelex relex)
+  (set! grelations relations)
+  (set! gabstract abstract)
+  (set! gr2l r2l)
+  (set! gverbs verbs)
+  (set! gverb verb)
+  (set! gsubj-rel subj-rel)
+  (set! gobj-rel obj-rel)
+  (set! gobj obj)
+  (set! gpobj-rel pobj-rel)
+  (set! gkey-words key-words)
 
   ; subj-rel
-  ;key-words
-
- (display "r2l:\n")
- r2l
-
+  ; key-words
+  (display "\n------------------------------------------\n")
+  (display "r2l:\n\n")
+  (display r2l)
+  (display "\n\n------------------------------------------\n")
+  (display "\nabstract version:\n\n")
+  (display abstract)
 )
 
 
+;;;;;;;;;;;;;;;;
+; Utils
+
+(define p qp-parse)
+
+(define (e-parse text)
+ (define sent (car (nlp-parse text)))
+  ; For now we are just using the first parse
+  ; Todo: Use multiple parses, if parser returns multiple
+  (define parse (car (sentence-get-parses sent)))
+  parse
+)
+
+(define ep e-parse)
 
 
 ; Todo: How to deal with sentences with multiple subj-verb-obj triplets. E.g.,
