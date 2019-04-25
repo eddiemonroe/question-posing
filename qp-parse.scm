@@ -1,5 +1,6 @@
 ; Proof of concept question posing in response to utterance based on background
 ; knowledge and reasoning
+; qp-parse.scm explores different parsing and representation approaches
 
 (use-modules
 	(opencog)
