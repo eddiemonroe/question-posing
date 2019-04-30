@@ -9,7 +9,7 @@
   (opencog nlp relex2logic)
   (opencog nlp sureal)
   (opencog pln)
-  (opencog rule-engine)
+  (opencog ure)
   (srfi srfi-1)
 )
 
@@ -97,7 +97,8 @@
 
 ;; We need to form an abstracted version of the utterance r2l
 
-;; MapLink doesn't work for this
+;; MapLink doesn't work for this b/c it tries to match each r2l piece separately
+;; rather than as a whole.
 ;(define r2l-abstract-map
 ;  (Map
 ;    r2l-abstract-map-rule
@@ -110,23 +111,34 @@
 (define temp-as (cog-new-atomspace))
 (cog-cp utter-logic temp-as)
 (cog-set-atomspace! temp-as)
-(define r2l-abstract (cog-execute! r2l-abstract-rule))
-(cog-cp r2l-abstract main-as)
-; (clear)   ; for now, need to keep the handle valid
+(define utter-abstract (cog-execute! r2l-abstract-rule))
+(cog-cp utter-abstract main-as)
+; (clear)   ; for now, keep the handle valid for debugging purposes
 (cog-set-atomspace! main-as)
 
+
+;; Experimental approach using DualLink to target instantiated Implications
 ;; Let's try the approach of grabbing the potentially applicable background
 ;; knowledge by getting Implication links with premises matching utter r2l
+#!
 (define dl
-  (Dual (gar r2l-abstract)))
+  (Dual (gar utter-abstract)))
 
 (define matched-pattern (cog-execute! dl))
 
 ;; Then what is best way to instantiate (just based on matched patterns)
 
-(define dltest
-  (Dual
-    (ImplicationScope
-      (Variable "$VarDecl")
-      (gar r2l-abstract)
-      (Variable "$Implicand"))))
+;(define dltest
+;  (Dual
+;    (ImplicationScope
+;      (Variable "$VarDecl")
+;      (gar utter-abstract)
+;      (Variable "$Implicand"))))
+!#
+
+; Conditional full instantiation rule method
+
+;; For now, lead the "standard" pln rule base
+(pln-load)
+
+
