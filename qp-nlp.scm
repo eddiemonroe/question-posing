@@ -13,35 +13,8 @@
   (srfi srfi-1)
 )
 
-; --- Knowledge --- ;
-(ImplicationScope (stv 1 1)
-  (TypedVariable
-    (Variable "$PersonX")
-    (Type "ConceptNode"))
-  (Evaluation
-    (Predicate "watch")
-    (List
-      (Variable "$PersonX")
-      (Concept "movie")))
-  (Evaluation
-    (Predicate "want")
-    (List
-      (Variable "$PersonX")
-      (Concept "relax"))))
-
-(ImplicationScope (stv 1 1)
-  (TypedVariable
-    (Variable "$PersonX")
-    (Type "ConceptNode"))
-  (Evaluation
-    (Predicate "watch")
-    (List
-      (Variable "$PersonX")
-      (Concept "movie")))
-  (Evaluation
-    (Predicate "entertained")
-    (List
-      (Variable "$PersonX"))))
+;; Load the background Knowledge
+(load "knowledge.scm")
 
 ; --- Rules --- ;
 
@@ -140,5 +113,3 @@
 
 ;; For now, lead the "standard" pln rule base
 (pln-load)
-
-
