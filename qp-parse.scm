@@ -160,6 +160,7 @@
   ; use just the first one for now
   (define interp (car (sent-get-interp sent)))
 
+	; get-abstract-version is from relex2logic/post-processing.scm
   (define abstract (get-abstract-version interp))
 
   (define relex (parse-get-relex-outputs parse))
@@ -206,7 +207,7 @@
   (display "r2l:\n\n")
   (display r2l)
   (display "\n\n------------------------------------------\n")
-  (display "\nabstract version:\n\n")
+  (display "\nabstract version (from r2l post-processing.scm):\n\n")
   (display abstract)
 )
 
@@ -230,5 +231,3 @@
 ; Todo: How to deal with sentences with multiple subj-verb-obj triplets. E.g.,
 ; "Do you want to eat ice cream."
 ; Todo: Add nn DefinedLigusticConcept, as in for "ice cream"
-
-

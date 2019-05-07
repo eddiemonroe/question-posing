@@ -29,3 +29,32 @@
     (Predicate "entertained")
     (List
       (Variable "$PersonX"))))
+
+;; Test
+(ImplicationScope (stv 1 1)
+  (TypedVariable
+    (Variable "$A")
+    (Type "ConceptNode"))
+  (Evaluation
+    (Predicate "implicant")
+    (list
+      (Variable "$A")))
+  (Evaluation
+    (Predicate "implicand")
+    (List
+      (Variable "$A"))))
+
+
+  (ImplicationScope (stv 1 1)
+    (TypedVariable
+      (Variable "$PersonX")
+      (Type "ConceptNode"))
+    (Evaluation
+      (Predicate "drink")
+      (List
+        (Variable "$PersonX")
+        (Concept "beer")))
+    (Evaluation
+      (Predicate "drunk")
+      (List
+        (Variable "$PersonX"))))
