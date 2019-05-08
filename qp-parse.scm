@@ -3,14 +3,14 @@
 ; qp-parse.scm explores different parsing and representation approaches
 
 (use-modules
-	(opencog)
-	(opencog exec)
-	(opencog nlp)
-	(opencog nlp chatbot)
-	(opencog nlp relex2logic)
-	(opencog nlp sureal)
-	(srfi srfi-1) ; needed for delete-duplicates
-)
+  (opencog)
+  (opencog exec)
+  (opencog nlp)
+  (opencog nlp chatbot)
+  (opencog nlp relex2logic)
+  (opencog nlp sureal)
+  (srfi srfi-1) ; needed for delete-duplicates
+  )
 
 ; -----------------------------------------------------------------------
 (define (parse-get-relex-relation-type parse rel-type)
@@ -66,10 +66,10 @@
 !#
 
 (define (parse-get-obj parse)
-	(let ((verb-obj (parse-get-obj-relation parse)))
-	  (if (null? verb-obj)
-	    '()
-	    (gdr verb-obj))))
+  (let ((verb-obj (parse-get-obj-relation parse)))
+    (if (null? verb-obj)
+      '()
+      (gdr verb-obj))))
 
 (define (parse-get-verbs parse)
  (cog-execute!
@@ -160,7 +160,7 @@
   ; use just the first one for now
   (define interp (car (sent-get-interp sent)))
 
-	; get-abstract-version is from relex2logic/post-processing.scm
+  ; get-abstract-version is from relex2logic/post-processing.scm
   (define abstract (get-abstract-version interp))
 
   (define relex (parse-get-relex-outputs parse))

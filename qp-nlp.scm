@@ -85,12 +85,30 @@
 (cog-cp utter-logic temp-as)
 (cog-set-atomspace! temp-as)
 (define utter-abstract (cog-execute! r2l-abstract-rule))
-(cog-cp utter-abstract main-as)
-; (clear)   ; for now, keep the handle valid for debugging purposes
+
+;; Copy the result atoms into the main atomspace
+;; below is not good because we want a handle to the atoms in the main as
+; (cog-cp utter-abstract main-as)
+(cog-set-atomspace! main-as)
+(set! utter-abstract (Set (cog-outgoing-set utter-abstract)))
+
+;; tag abstract form of utterance with cog key-value
+;(cog-set-value! (Concept "utterance") (Concept "current-abstract")
+;  utter-abstract)
+
+;; now go back and clear the temp-as
+(cog-set-atomspace! temp-as)
+(clear)   ; for now, keep the handle valid for debugging purposes
 (cog-set-atomspace! main-as)
 
+;; Temp hack to set confidence values above 0 for instantiation rules
+(for-each
+  (lambda (eval-link) (cog-set-tv! eval-link (stv 1 1)))
+  (cog-outgoing-set utter-abstract))
 
-;; Experimental approach using DualLink to target instantiated Implications
+
+
+;; Experimental approach wip using DualLink to target instantiated Implications
 ;; Let's try the approach of grabbing the potentially applicable background
 ;; knowledge by getting Implication links with premises matching utter r2l
 #!
@@ -109,7 +127,18 @@
 ;      (Variable "$Implicand"))))
 !#
 
-; Conditional full instantiation rule method
+;; ---------------------------------------------
+;; Conditional full instantiation rule method
 
 ;; For now, lead the "standard" pln rule base
 (pln-load)
+
+(define meta-bind-results
+  (meta-bind conditional-full-instantiation-implication-scope-meta-rule))
+
+;; This creates BindLink rules for each ImplicationScopeLink
+;; Do we instead just want to grab matching Implications and create BL's on the fly?
+(define rules (cog-execute!
+  conditional-full-instantiation-implication-scope-meta-rule))
+
+meta-bind-results  
