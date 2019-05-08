@@ -26,8 +26,6 @@
 
 (define utter-logic (sent-get-r2l-outputs utter-sent))
 
-;; Temp hacky way to convert "I" to "you"
-;(set! utter-logic (cog-execute! i-to-you-rule))
 
 ;; We need to form an abstracted version of the utterance r2l
 
@@ -61,6 +59,9 @@
 (cog-set-atomspace! temp-as)
 (clear)   ; for now, keep the handle valid for debugging purposes
 (cog-set-atomspace! main-as)
+
+;; Temp hacky way to convert "I" to "you"
+(set! utter-abstract (cog-execute! i-to-you-rule))
 
 ;; Temp hack to set confidence values above 0 for instantiation rules
 (for-each
