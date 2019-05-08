@@ -27,8 +27,7 @@
       (Concept "movie")))
   (Evaluation
     (Predicate "entertained")
-    (List
-      (Variable "$PersonX"))))
+    (Variable "$PersonX")))
 
 ;; Test
 (ImplicationScope (stv 1 1)
