@@ -62,11 +62,36 @@
         (Variable "$concept1")
         (Variable "$concept2")))))
 
+;; Hacky rule to substitute "you" for "I"
+(define i-to-you-rule
+  (Bind
+    (VariableList
+      (TypedVariable
+        (Variable "$any-pred")
+        (Type "PredicateNode"))
+      (TypedVariable
+        (Variable "$any-concept")
+        (Type "ConceptNode")))
+    (Evaluation
+      (Variable "$any-pred")
+      (List
+        (Concept "I")
+        (Variable "$any-concept")))
+    (Evaluation
+      (Variable "$any-pred")
+      (List
+        (Concept "you")
+        (Variable "$any-concept")))))
+
+
 ; --- Input Utterance --- ;
 ;; Parse the input utterance
 (define utter-sent (car (nlp-parse "I watched a movie")))
 
 (define utter-logic (sent-get-r2l-outputs utter-sent))
+
+;; Temp hacky way to convert "I" to "you"
+;(set! utter-logic (cog-execute! i-to-you-rule))
 
 ;; We need to form an abstracted version of the utterance r2l
 
@@ -133,12 +158,21 @@
 ;; For now, lead the "standard" pln rule base
 (pln-load)
 
+;; Results in BL's for every ImplicationScope in the KB
 (define meta-bind-results
   (meta-bind conditional-full-instantiation-implication-scope-meta-rule))
+(format #t "meta-bind-results:\n~a" meta-bind-results)
 
+  ; Testing
 ;; This creates BindLink rules for each ImplicationScopeLink
 ;; Do we instead just want to grab matching Implications and create BL's on the fly?
 (define rules (cog-execute!
   conditional-full-instantiation-implication-scope-meta-rule))
 
-meta-bind-results  
+;; -------------------------------------
+;; Surreal question generation
+
+  ;For SuReal
+  (nlp-parse "were you interested?")
+  (nlp-parse "I am entertained")
+  (nlp-parse "I wanted to relax")
