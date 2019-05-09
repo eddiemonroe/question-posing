@@ -101,7 +101,7 @@
 ;; Results in BL's for every ImplicationScope in the KB
 (define meta-bind-results
   (meta-bind conditional-full-instantiation-implication-scope-meta-rule))
-(format #t "meta-bind-results:\n~a\n" meta-bind-results)
+;(format #t "meta-bind-results:\n~a\n" meta-bind-results)
 
 ; Testing
 ;; This creates BindLink rules for each ImplicationScopeLink
@@ -124,6 +124,8 @@
 
 (set! meta-bind-results
   (Set (map add-list-to-eval (cog-outgoing-set meta-bind-results))))
+
+(format #t "meta-bind-results:\n~a\n" meta-bind-results)
 
 ; Generate the sentence
 (define questions
@@ -150,6 +152,8 @@
     )))
 
 (define r1 (gar meta-bind-results))
+(define r2 (gdr meta-bind-results))
+
 (define rlist
   (Evaluation
     (gar r1)
