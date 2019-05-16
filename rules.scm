@@ -1,7 +1,7 @@
 ; --- Rules for question posing --- ;
 
-; For R2L predicates, substitute predicates and concepts based on particular word
-; instances with their generalized names.
+;; For R2L predicates, substitute predicates and concepts based on particular word
+;; instances with their generalized names.
 (define r2l-abstract-rule
   (Bind
     (VariableList
@@ -19,10 +19,15 @@
         (Type "ConceptNode"))
       (TypedVariable
         (Variable "$concept2-inst")
-        (Type "ConceptNode"))
+        (TypeChoice
+          (Type "ConceptNode")
+          (Type "PredicateNode")))
       (TypedVariable
         (Variable "$concept2")
-        (Type "ConceptNode")))
+        (TypeChoice
+          (Type "ConceptNode")
+          (Type "PredicateNode")))
+    )
     (And
       (Evaluation
         (Variable "$pred-inst")
@@ -35,9 +40,13 @@
       (Inheritance
         (Variable "$concept1-inst")
         (Variable "$concept1"))
-      (Inheritance
-        (Variable "$concept2-inst")
-        (Variable "$concept2")))
+      (Choice
+        (Inheritance
+          (Variable "$concept2-inst")
+          (Variable "$concept2"))
+        (Implication
+          (Variable "$concept2-inst")
+          (Variable "$concept2"))))
     (Evaluation
       (Variable "$pred")
       (List
