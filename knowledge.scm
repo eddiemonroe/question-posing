@@ -14,7 +14,7 @@
     (Predicate "want")
     (List
       (Variable "$PersonX")
-      (Concept "relax"))))
+      (Predicate "relax"))))
 
 (ImplicationScope (stv 1 1)
   (TypedVariable

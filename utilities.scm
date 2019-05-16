@@ -26,7 +26,6 @@
 
 (define (text-get-r2l-output text)
   (sent-get-r2l-outputs (text-get-sent text)))
-
 (define (text-get-r2l-abstract text)
   (define focus-set (text-get-r2l-output text))
   (apply-rule-to-focus-set r2l-abstract-rule focus-set))
@@ -49,17 +48,13 @@
     (cog-cp focus-set temp-as)
     (cog-set-atomspace! temp-as)
     (cog-execute! r2l-abstract-rule)))
-    ; ))
-  ; (cog-cp focus-set temp-as)
-  ; (cog-set-atomspace! temp-as)
-  ; (set! results (cog-execute! r2l-abstract-rule))
 
   ;; Copy the result atoms into the original atomspace
-  ;; Below does not work for us here because we to return valid handles to the
-  ;; result atoms in the original atomspace.
+  ;; Below does not work for us here because we want to return valid handles to
+  ;; the result atoms in the original atomspace.
   ; (cog-cp utter-abstract orig-as)
 
-  ;; Creating a Set in the original atomspace results in it'scontents being
+  ;; Creating a Set in the original atomspace results in its contents being
   ;; created there as well.
   (cog-set-atomspace! orig-as)
   (set! results (Set (cog-outgoing-set results)))
