@@ -29,6 +29,21 @@
     (Predicate "entertained")
     (Variable "$PersonX")))
 
+    (ImplicationScope (stv 1 1)
+      (TypedVariable
+        (Variable "$PersonX")
+        (Type "ConceptNode"))
+      (Evaluation
+        (Predicate "watch")
+        (List
+          (Variable "$PersonX")
+          (Concept "movie")))
+      (Evaluation
+        (Predicate "eat")
+        (List
+          (Variable "$PersonX")
+          (Concept "popcorn"))))
+
 (ImplicationScope (stv 1 1)
   (TypedVariable
     (Variable "$PersonX")
