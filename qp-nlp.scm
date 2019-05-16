@@ -22,6 +22,8 @@
 ;Pre-parsed sentences for Sureal
 (load "sureal-preparse.scm")
 
+(load "utilities.scm")
+
 ; --- Input Utterance --- ;
 ;; Parse the input utterance
 ;; Todo: Handle multiple sentence interpretations
@@ -40,6 +42,10 @@
 ;    utter-logic))
 
 ;; Apply the r2l-abstract-rule just to the utterance r2l (rather than globally)
+(define utter-abstract
+  (apply-rule-to-focus-set r2l-abstract-rule utter-logic))
+
+#! ;; Using the function in utilities.scm for this instead
 ;; Create temp atomspace do do this. (Alternatively could use one-step forward-
 ;; chaining with focus set.)
 (define main-as (cog-atomspace))
@@ -62,6 +68,8 @@
 (cog-set-atomspace! temp-as)
 (clear)   ; for now, keep the handle valid for debugging purposes
 (cog-set-atomspace! main-as)
+
+!#
 
 ;; Temp hacky way to convert "I" to "you"
 (set! utter-abstract (cog-execute! i-to-you-rule))
@@ -153,9 +161,10 @@
 
 (define r1 (gar meta-bind-results))
 (define r2 (gdr meta-bind-results))
-
+#!
 (define rlist
   (Evaluation
     (gar r1)
     (List
       (gdr r1))))
+!#
