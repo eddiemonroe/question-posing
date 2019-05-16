@@ -45,32 +45,6 @@
 (define utter-abstract
   (apply-rule-to-focus-set r2l-abstract-rule utter-logic))
 
-#! ;; Using the function in utilities.scm for this instead
-;; Create temp atomspace do do this. (Alternatively could use one-step forward-
-;; chaining with focus set.)
-(define main-as (cog-atomspace))
-(define temp-as (cog-new-atomspace))
-(cog-cp utter-logic temp-as)
-(cog-set-atomspace! temp-as)
-(define utter-abstract (cog-execute! r2l-abstract-rule))
-
-;; Copy the result atoms into the main atomspace
-;; below is not good because we want a handle to the atoms in the main as
-; (cog-cp utter-abstract main-as)
-(cog-set-atomspace! main-as)
-(set! utter-abstract (Set (cog-outgoing-set utter-abstract)))
-
-;; tag abstract form of utterance with cog key-value
-;(cog-set-value! (Concept "utterance") (Concept "current-abstract")
-;  utter-abstract)
-
-;; now go back and clear the temp-as
-(cog-set-atomspace! temp-as)
-(clear)   ; for now, keep the handle valid for debugging purposes
-(cog-set-atomspace! main-as)
-
-!#
-
 ;; Temp hacky way to convert "I" to "you"
 (set! utter-abstract (cog-execute! i-to-you-rule))
 
@@ -78,7 +52,6 @@
 (for-each
   (lambda (eval-link) (cog-set-tv! eval-link (stv 1 1)))
   (cog-outgoing-set utter-abstract))
-
 
 
 ;; Experimental approach wip using DualLink to target instantiated Implications
@@ -122,7 +95,7 @@
 
 ;; Temp hack to workaround sureal bug for Eval's without List for args
 (define (add-list-to-eval eval)
-  (if (not (equal? (cog-type (gar eval)) 'ListLink))
+  (if (not (equal? (cog-type (gdr eval)) 'ListLink))
   ;; Assumption: if no List for arg, then we know it is a single argument,
   ;; though this will be changing, i.e., mult Eval args without list
   (let ([pred (gar eval)]
