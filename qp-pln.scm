@@ -149,15 +149,6 @@
 
 ;; ---------------------------------------
 ;; Testing
-(define (sureal-for-logic logic)
-  (sureal
-    (Set
-      logic
-;      (Inheritance (InterpretationNode "blah") (DefinedLinguisticConcept "TruthQuerySpeechAct"))
-
-      (Inheritance (InterpretationNode "blah")
-                   (DefinedLinguisticConcept "TruthQuerySpeechAct"))
-    )))
 
 (define r1 (gar meta-bind-results))
 (define r2 (gdr meta-bind-results))

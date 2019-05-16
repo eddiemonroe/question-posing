@@ -85,3 +85,14 @@
 ; Get the lemma for a given WordInstance
 (define (instance-get-lemma instance)
   (car (cog-chase-link 'LemmaLink 'WordNode instance)))
+
+;--------------------------------------
+; Sureal utilities
+
+;; Sureal sentence generation for atomese logic representation
+(define (sureal-for-logic logic)
+  (sureal
+    (Set
+      logic
+      (Inheritance (InterpretationNode "blah")
+                   (DefinedLinguisticConcept "TruthQuerySpeechAct")))))
