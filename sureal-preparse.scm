@@ -12,6 +12,7 @@
 (nlp-parse "Did you want to swim?")
 ; Looks the "to" in "to relax" is needed to get "Did you want to relax?"
 (nlp-parse "to relax")
+(nlp-parse "wanted")
 ; (nlp-parse "You wanted to relax?")
 ; (nlp-parse "You want to relax?")
 ; (nlp-parse "You were wanting to relax.")

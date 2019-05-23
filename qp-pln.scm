@@ -80,9 +80,9 @@
 (pln-load)
 
 ;; Results in BL's for every ImplicationScope in the KB
-(define meta-bind-results
+(define kb-conclusions
   (meta-bind conditional-full-instantiation-implication-scope-meta-rule))
-;(format #t "meta-bind-results:\n~a\n" meta-bind-results)
+;(format #t "kb-conclusions:\n~a\n" kb-conclusions)
 
 ; Testing
 ;; This creates BindLink rules for each ImplicationScopeLink
@@ -103,28 +103,29 @@
     (Evaluation pred (List arg)))
     eval))
 
-(set! meta-bind-results
-  (Set (map add-list-to-eval (cog-outgoing-set meta-bind-results))))
+(set! kb-conclusions
+  (Set (map add-list-to-eval (cog-outgoing-set kb-conclusions))))
 
-(format #t "meta-bind-results:\n~a\n" meta-bind-results)
+(format #t "kb-conclusions:\n~a\n" kb-conclusions)
 
 ; Generate the sentence
 (define questions
   (append-map
-    (lambda (result-logic)
-      (sureal
-        (Set
-          result-logic
-          (Inheritance (InterpretationNode "blah") (DefinedLinguisticConcept "TruthQuerySpeechAct")))))
-    (cog-outgoing-set meta-bind-results)))
+    sureal-for-logic
+    ; (lambda (result-logic)
+    ;   (sureal
+    ;     (Set
+    ;       result-logic
+    ;       (Inheritance (InterpretationNode "blah") (DefinedLinguisticConcept "TruthQuerySpeechAct")))))
+    (cog-outgoing-set kb-conclusions)))
 
 (format #t "generated questions:\n~a\n" questions)
 
 ;; ---------------------------------------
 ;; Testing
 
-(define r1 (gar meta-bind-results))
-(define r2 (gdr meta-bind-results))
+(define r1 (gar kb-conclusions))
+(define r2 (gdr kb-conclusions))
 #!
 (define rlist
   (Evaluation

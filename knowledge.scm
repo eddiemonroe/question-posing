@@ -1,6 +1,10 @@
 ;; Background knowledge for question posing proof of concept
 
 ; --- Knowledge --- ;
+
+
+
+;; X watch movie --> X wanted to relax
 (ImplicationScope (stv 1 1)
   (TypedVariable
     (Variable "$PersonX")

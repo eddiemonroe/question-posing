@@ -110,9 +110,12 @@
   (sureal
     (Set
       logic
-      (Inheritance (InterpretationNode "blah")
-                   (DefinedLinguisticConcept "TruthQuerySpeechAct")))))
+      (Inheritance
+        (InterpretationNode "")
+        (DefinedLinguisticConcept "TruthQuerySpeechAct")))))
 
+(define (sureal-for-text text)
+  (sureal-for-logic (text-get-r2l-abstract text)))
 
 ;--------------------------------------
 ; Shortcuts for development
