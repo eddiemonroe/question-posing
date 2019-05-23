@@ -14,7 +14,8 @@
 ;; recreating it every time it's needed.
 (define temp-as (cog-new-atomspace))
 
-(load "rules.scm") ; used by text-get-r2l-abstract
+;; required by apply-r2l-abstract-rules-to-focus-set
+(load "rules.scm")
 
 (define (text-get-sent text)
   ;; Todo: handle multipes sentences returned by nlp-parse. (Does that every happen?)
@@ -26,9 +27,24 @@
 
 (define (text-get-r2l-output text)
   (sent-get-r2l-outputs (text-get-sent text)))
+
 (define (text-get-r2l-abstract text)
   (define focus-set (text-get-r2l-output text))
-  (apply-rule-to-focus-set r2l-abstract-rule focus-set))
+  (apply-r2l-abstract-rules-to-focus-set focus-set))
+
+
+(define (apply-r2l-abstract-rules-to-focus-set focus-set)
+  (append-map
+    (lambda (rule)
+      (cog-outgoing-set
+        (apply-rule-to-focus-set rule focus-set)))
+    r2l-abstract-rules))
+
+  ; (append
+  ;   (cog-outgoing-set
+  ;     (apply-rule-to-focus-set r2l-abstract-rule-1-arg focus-set))
+  ;   (cog-outgoing-set
+  ;     (apply-rule-to-focus-set r2l-abstract-rule-2-args focus-set))))
 
 (define (apply-rule-to-focus-set rule focus-set)
 "
@@ -47,7 +63,7 @@
   (define results (begin
     (cog-cp focus-set temp-as)
     (cog-set-atomspace! temp-as)
-    (cog-execute! r2l-abstract-rule)))
+    (cog-execute! rule)))
 
   ;; Copy the result atoms into the original atomspace
   ;; Below does not work for us here because we want to return valid handles to
@@ -96,3 +112,9 @@
       logic
       (Inheritance (InterpretationNode "blah")
                    (DefinedLinguisticConcept "TruthQuerySpeechAct")))))
+
+
+;--------------------------------------
+; Shortcuts for development
+(define abs text-get-r2l-abstract)
+(define out text-get-r2l-output)

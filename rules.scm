@@ -2,7 +2,43 @@
 
 ;; For R2L predicates, substitute predicates and concepts based on particular word
 ;; instances with their generalized names.
-(define r2l-abstract-rule
+;; New rules of this type should be added to the r2l-abstract-rules list below
+
+;; For single argument Predicates
+(define r2l-abstract-rule-1-arg
+  (Bind
+    (VariableList
+      (TypedVariable
+        (Variable "$pred-inst")
+        (Type "PredicateNode"))
+      (TypedVariable
+        (Variable "$pred")
+        (Type "PredicateNode"))
+      (TypedVariable
+        (Variable "$concept1-inst")
+        (Type "ConceptNode"))
+      (TypedVariable
+        (Variable "$concept1")
+        (Type "ConceptNode"))
+    )
+    (And
+      (Evaluation
+        (Variable "$pred-inst")
+        (List
+          (Variable "$concept1-inst")))
+      (Implication
+        (Variable "$pred-inst")
+        (Variable "$pred"))
+      (Inheritance
+        (Variable "$concept1-inst")
+        (Variable "$concept1")))
+    (Evaluation
+      (Variable "$pred")
+      (List
+        (Variable "$concept1")))))
+
+;; For 2 argument predicates
+(define r2l-abstract-rule-2-args
   (Bind
     (VariableList
       (TypedVariable
@@ -18,12 +54,12 @@
         (Variable "$concept1")
         (Type "ConceptNode"))
       (TypedVariable
-        (Variable "$concept2-inst")
+        (Variable "$concept-or-pred-inst")
         (TypeChoice
           (Type "ConceptNode")
           (Type "PredicateNode")))
       (TypedVariable
-        (Variable "$concept2")
+        (Variable "$concept-or-pred")
         (TypeChoice
           (Type "ConceptNode")
           (Type "PredicateNode")))
@@ -33,7 +69,7 @@
         (Variable "$pred-inst")
         (List
           (Variable "$concept1-inst")
-          (Variable "$concept2-inst")))
+          (Variable "$concept-or-pred-inst")))
       (Implication
         (Variable "$pred-inst")
         (Variable "$pred"))
@@ -42,16 +78,23 @@
         (Variable "$concept1"))
       (Choice
         (Inheritance
-          (Variable "$concept2-inst")
-          (Variable "$concept2"))
+          (Variable "$concept-or-pred-inst")
+          (Variable "$concept-or-pred"))
         (Implication
-          (Variable "$concept2-inst")
-          (Variable "$concept2"))))
+          (Variable "$concept-or-pred-inst")
+          (Variable "$concept-or-pred"))))
     (Evaluation
       (Variable "$pred")
       (List
         (Variable "$concept1")
-        (Variable "$concept2")))))
+        (Variable "$concept-or-pred")))))
+
+;; List of the r2l-abstract-rules.
+;; New rules of this type should be added to this list.
+(define r2l-abstract-rules
+  (list
+    r2l-abstract-rule-1-arg
+    r2l-abstract-rule-2-args))
 
 ;; Hacky rule to substitute "you" for "I"
 (define i-to-you-rule

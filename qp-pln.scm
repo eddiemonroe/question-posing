@@ -43,7 +43,7 @@
 
 ;; Apply the r2l-abstract-rule just to the utterance r2l (rather than globally)
 (define utter-abstract
-  (apply-rule-to-focus-set r2l-abstract-rule utter-logic))
+  (apply-r2l-abstract-rules-to-focus-set utter-logic))
 
 ;; Temp hacky way to convert "I" to "you"
 (set! utter-abstract (cog-execute! i-to-you-rule))
