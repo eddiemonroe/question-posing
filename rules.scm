@@ -97,7 +97,22 @@
     r2l-abstract-rule-2-args))
 
 ;; Hacky rule to substitute "you" for "I"
-(define i-to-you-rule
+(define i-to-you-rule-1-arg
+  (Bind
+    (VariableList
+      (TypedVariable
+        (Variable "$any-pred")
+        (Type "PredicateNode")))
+    (Evaluation
+      (Variable "$any-pred")
+      (List
+        (Concept "I")))
+    (Evaluation
+      (Variable "$any-pred")
+      (List
+        (Concept "you")))))
+
+(define i-to-you-rule-2-args
   (Bind
     (VariableList
       (TypedVariable
@@ -116,3 +131,8 @@
       (List
         (Concept "you")
         (Variable "$any-concept")))))
+
+(define i-to-you-rules
+  (list
+    i-to-you-rule-1-arg
+    i-to-you-rule-2-args))

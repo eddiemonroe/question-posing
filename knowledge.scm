@@ -1,6 +1,22 @@
 ;; Background knowledge for question posing proof of concept
 
-; --- Knowledge --- ;
+;; --- Knowledge --- ;
+
+;; X dies suddenly --> Y feels sad
+;; X watch movie --> X wanted to relax
+(ImplicationScope (stv 1 1)
+  (TypedVariable
+    (Variable "$PersonX")
+    (Type "ConceptNode"))
+  (Evaluation
+    (Predicate "die")
+    (List
+      (Variable "$PersonX")))
+  (Evaluation
+    (Predicate "cry")
+    (List
+      (Concept "PersonY"))))
+
 
 
 

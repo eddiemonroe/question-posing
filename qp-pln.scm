@@ -27,7 +27,10 @@
 ; --- Input Utterance --- ;
 ;; Parse the input utterance
 ;; Todo: Handle multiple sentence interpretations
-(define utter-sent (car (nlp-parse "I watched a movie")))
+(define utterance "I watched a movie")
+(define utterance "The man died.")
+
+(define utter-sent (car (nlp-parse utterance)))
 
 (define utter-logic (sent-get-r2l-outputs utter-sent))
 
@@ -45,13 +48,20 @@
 (define utter-abstract
   (apply-r2l-abstract-rules-to-focus-set utter-logic))
 
+(format #t "utterance abstract: ~a\n" utter-abstract)
+
 ;; Temp hacky way to convert "I" to "you"
-(set! utter-abstract (cog-execute! i-to-you-rule))
+;; Doing this after the pln inference on the conclusions now
+; (set! utter-abstract (cog-execute! i-to-you-rule))
+; (set! utter-abstract (cog-outgoing-set (cog-execute! i-to-you-rule-2-args)))
+; (set! utter-abstract (apply-rules-to-focus-set i-to-you-rules utter-abstract))
+
+; (format #t "utterance abstract: ~a\n" utter-abstract)
 
 ;; Set confidence values above 0 for instantiation rules
 (for-each
   (lambda (eval-link) (cog-set-tv! eval-link (stv 1 1)))
-  (cog-outgoing-set utter-abstract))
+  utter-abstract)
 
 
 ;; Experimental approach wip using DualLink to target instantiated Implications
@@ -82,7 +92,7 @@
 ;; Results in BL's for every ImplicationScope in the KB
 (define kb-conclusions
   (meta-bind conditional-full-instantiation-implication-scope-meta-rule))
-;(format #t "kb-conclusions:\n~a\n" kb-conclusions)
+; (format #t "kb-conclusions:\n~a\n" kb-conclusions)
 
 ; Testing
 ;; This creates BindLink rules for each ImplicationScopeLink
@@ -104,9 +114,20 @@
     eval))
 
 (set! kb-conclusions
-  (Set (map add-list-to-eval (cog-outgoing-set kb-conclusions))))
+  ; (Set (map add-list-to-eval (cog-outgoing-set kb-conclusions))))
+  (map add-list-to-eval (cog-outgoing-set kb-conclusions)))
+(format #t "kb-conclusions 1:\n~a\n" kb-conclusions)
 
-(format #t "kb-conclusions:\n~a\n" kb-conclusions)
+
+;; Temp hacky way to convert "I" to "you"
+(set! kb-conclusions (replace-i-with-you kb-conclusions))
+;(set! kb-conclusions (cog-execute! i-to-you-rule-2-args))
+;(set! kb-conclusions (apply-rules-to-focus-set i-to-you-rules kb-conclusions))
+
+(format #t "kb-conclusions 2:\n~a\n" kb-conclusions)
+
+; (set! utter-abstract (cog-execute! i-to-you-rule))
+
 
 ; Generate the sentence
 (define questions
@@ -117,15 +138,15 @@
     ;     (Set
     ;       result-logic
     ;       (Inheritance (InterpretationNode "blah") (DefinedLinguisticConcept "TruthQuerySpeechAct")))))
-    (cog-outgoing-set kb-conclusions)))
+    kb-conclusions))
 
 (format #t "generated questions:\n~a\n" questions)
 
 ;; ---------------------------------------
 ;; Testing
 
-(define r1 (gar kb-conclusions))
-(define r2 (gdr kb-conclusions))
+; (define r1 (gar kb-conclusions))
+; (define r2 (gdr kb-conclusions))
 #!
 (define rlist
   (Evaluation

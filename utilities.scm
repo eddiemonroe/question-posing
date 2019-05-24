@@ -33,19 +33,6 @@
   (apply-r2l-abstract-rules-to-focus-set focus-set))
 
 
-(define (apply-r2l-abstract-rules-to-focus-set focus-set)
-  (append-map
-    (lambda (rule)
-      (cog-outgoing-set
-        (apply-rule-to-focus-set rule focus-set)))
-    r2l-abstract-rules))
-
-  ; (append
-  ;   (cog-outgoing-set
-  ;     (apply-rule-to-focus-set r2l-abstract-rule-1-arg focus-set))
-  ;   (cog-outgoing-set
-  ;     (apply-rule-to-focus-set r2l-abstract-rule-2-args focus-set))))
-
 (define (apply-rule-to-focus-set rule focus-set)
 "
   Apply a single BindLink rule to a particular focus set of atoms.
@@ -82,13 +69,37 @@
 
   results)
 
+(define (apply-rules-to-focus-set rules focus-set)
+  (append-map
+    (lambda (rule)
+      (cog-outgoing-set
+        (apply-rule-to-focus-set rule focus-set)))
+    rules))
+
+(define (apply-r2l-abstract-rules-to-focus-set focus-set)
+  (apply-rules-to-focus-set r2l-abstract-rules focus-set))
+
+  ; (append-map
+  ;   (lambda (rule)
+  ;     (cog-outgoing-set
+  ;       (apply-rule-to-focus-set rule focus-set)))
+  ;   r2l-abstract-rules))
+
+  ; (append
+  ;   (cog-outgoing-set
+  ;     (apply-rule-to-focus-set r2l-abstract-rule-1-arg focus-set))
+  ;   (cog-outgoing-set
+  ;     (apply-rule-to-focus-set r2l-abstract-rule-2-args focus-set))))
+
+
+
 ;; Notes the below relies on get-abstract-version in relex2logic/post-processing.scm.
 ;; That procedure intentially does not abstract definite nouns, so is probably not
 ;; useful for the present purposes. E.g., For "He saw the movie." 'movie' does
 ;; not get abstacted, but for "He saw a movie." 'movie' does get abstracted. Note
 ;; also that pronouns never get abstracted. Potential solution: include all or
 ;; some definites in a similar function. Or use a BL rule based approach.
-(define (text-get-abstract-version text)
+(define (text-get-canned-abstract-version text)
 (let* ([sent (text-get-sent text)]
   [interps (sent-get-interp sent)])
   (map get-abstract-version interps)))
@@ -101,6 +112,36 @@
 ; Get the lemma for a given WordInstance
 (define (instance-get-lemma instance)
   (car (cog-chase-link 'LemmaLink 'WordNode instance)))
+
+;; Replace "I" with "you" for predicate arguments
+;; Assumes args are wrapped in a ListLink
+(define (eval-replace-i-with-you orig-eval)
+  (define nodes (cog-get-all-nodes orig-eval))
+  (if (member (Concept "I") nodes)
+    (begin
+      (format #t "found one in ~a\n" orig-eval)
+      ;; for now assuming it's Eval Pred List arguments
+      (let* ((pred (gar orig-eval))
+             (args (cog-outgoing-set (gdr orig-eval)))
+             (new-args '()))
+             ; (new-eval '())))
+        (set! new-args
+          (map
+            (lambda (arg)
+              (if (and (eq? (cog-type arg) 'ConceptNode)
+                       (equal? (cog-name arg) "I"))
+                (Concept "you")
+                arg))
+            args))
+
+        (Evaluation
+          pred
+          (List new-args))))
+    orig-eval)
+)
+
+(define (replace-i-with-you evals)
+  (map eval-replace-i-with-you evals))
 
 ;--------------------------------------
 ; Sureal utilities
