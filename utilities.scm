@@ -148,12 +148,14 @@
 
 ;; Sureal sentence generation for atomese logic representation
 (define (sureal-for-logic logic)
-  (sureal
-    (Set
-      logic
-      (Inheritance
-        (InterpretationNode "")
-        (DefinedLinguisticConcept "TruthQuerySpeechAct")))))
+  (if (not (null? logic))
+    (sureal
+      (Set
+        logic
+        (Inheritance
+          (InterpretationNode "")
+          (DefinedLinguisticConcept "TruthQuerySpeechAct"))))
+    '()))
 
 (define (sureal-for-text text)
   (sureal-for-logic (text-get-r2l-abstract text)))
