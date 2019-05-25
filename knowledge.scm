@@ -15,7 +15,7 @@
   (Evaluation
     (Predicate "cry")
     (List
-      (Concept "PersonY"))))
+      (Concept "you"))))
 
 
 

@@ -19,3 +19,5 @@
 
 (nlp-parse "Did he eat fish?")
 (nlp-parse "popcorn")
+
+(nlp-parse "Did Rich cry?")

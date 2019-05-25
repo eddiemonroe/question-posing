@@ -119,7 +119,7 @@
   (define nodes (cog-get-all-nodes orig-eval))
   (if (member (Concept "I") nodes)
     (begin
-      (format #t "found one in ~a\n" orig-eval)
+      ; (format #t "found one in ~a\n" orig-eval)
       ;; for now assuming it's Eval Pred List arguments
       (let* ((pred (gar orig-eval))
              (args (cog-outgoing-set (gdr orig-eval)))
