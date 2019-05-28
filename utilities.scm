@@ -113,35 +113,7 @@
 (define (instance-get-lemma instance)
   (car (cog-chase-link 'LemmaLink 'WordNode instance)))
 
-;; Replace "I" with "you" for predicate arguments
-;; Assumes args are wrapped in a ListLink
-(define (eval-replace-i-with-you orig-eval)
-  (define nodes (cog-get-all-nodes orig-eval))
-  (if (member (Concept "I") nodes)
-    (begin
-      ; (format #t "found one in ~a\n" orig-eval)
-      ;; for now assuming it's Eval Pred List arguments
-      (let* ((pred (gar orig-eval))
-             (args (cog-outgoing-set (gdr orig-eval)))
-             (new-args '()))
-             ; (new-eval '())))
-        (set! new-args
-          (map
-            (lambda (arg)
-              (if (and (eq? (cog-type arg) 'ConceptNode)
-                       (equal? (cog-name arg) "I"))
-                (Concept "you")
-                arg))
-            args))
 
-        (Evaluation
-          pred
-          (List new-args))))
-    orig-eval)
-)
-
-(define (replace-i-with-you evals)
-  (map eval-replace-i-with-you evals))
 
 ;--------------------------------------
 ; Sureal utilities

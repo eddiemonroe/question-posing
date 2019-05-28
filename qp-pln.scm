@@ -61,32 +61,35 @@
   ;; Transorm utterance text to abastact logical atomese form
   (define utter-logic (text-get-r2l-abstract text))
 
-  ;; Temp hacky way to convert "I" Concepts to "you"
-  (set! utter-logic (replace-i-with-you utter-logic))
+  (if (not (null? utter-logic)) (begin
+    ;; Temp hacky way to convert "I" Concepts to "you"
+    (set! utter-logic (replace-i-and-we-with-you utter-logic))
 
-  ;; Set confidence values above 0 for instantiation rules
-  (for-each
-    (lambda (eval-link) (cog-set-tv! eval-link (stv 1 1)))
-    utter-logic)
+    ;; Set confidence values above 0 for instantiation rules
+    (for-each
+      (lambda (eval-link) (cog-set-tv! eval-link (stv 1 1)))
+      utter-logic)
 
-  (format #t "\nutter-logic:\n ~a\n" utter-logic)
+    (format #t "\nutter-logic:\n ~a\n" utter-logic)
 
-  ;; PLN reasoning to derive knowledge-based conclusions from utterance
-  (set! kb-conclusions (conclusions-for-utter-logic utter-logic))
-  (display "YOU ARE HERE\n")
+    ;; PLN reasoning to derive knowledge-based conclusions from utterance
+    (set! kb-conclusions (conclusions-for-utter-logic utter-logic))
+    (display "YOU ARE HERE\n")
 
-  ;; Wrap Predicate args in List where needed for sureal bug
-  (set! kb-conclusions
-    (map add-list-to-eval (cog-outgoing-set kb-conclusions)))
-  (format #t "kb-conclusions 1:\n~a\n" kb-conclusions)
+    ;; Wrap Predicate args in List where needed for sureal bug
+    (set! kb-conclusions
+      (map add-list-to-eval (cog-outgoing-set kb-conclusions)))
+    (format #t "kb-conclusions 1:\n~a\n" kb-conclusions)
 
-  ; Generate the responses with SuReal
-  (set! questions
-    (append-map
-      sureal-for-logic
-      kb-conclusions))
+    ; Generate the responses with SuReal
+    (set! questions
+      (append-map
+        sureal-for-logic
+        kb-conclusions))
 
-  (format #t "generated questions:\n~a\n" questions)
+    (format #t "generated questions:\n~a\n" questions))
+  ;; return empty list because logic for utterance is null
+  '())
 )
 
 (define (conclusions-for-utter-logic utter-logic)
@@ -95,6 +98,39 @@
   (format #t "fc conclusions:\n~a\n" conclusions)
   conclusions
 )
+
+;; Replace "I"/"we" with "you" for predicate arguments
+;; Assumes args are wrapped in a ListLink
+(define (eval-replace-i-and-we-with-you orig-eval)
+  (define nodes (cog-get-all-nodes orig-eval))
+  (if (or (member (Concept "I") nodes)
+          (member (Concept "we") nodes))
+    (begin
+      ; (format #t "found one in ~a\n" orig-eval)
+      ;; for now assuming it's Eval Pred List arguments
+      (let* ((pred (gar orig-eval))
+             (args (cog-outgoing-set (gdr orig-eval)))
+             (new-args '()))
+; (format "subst args: ~a" )
+        (set! new-args
+          (map
+            (lambda (arg)
+              (if (and (eq? (cog-type arg) 'ConceptNode)
+                       (or
+                         (equal? (cog-name arg) "I")
+                         (equal? (cog-name arg) "we")))
+                (Concept "you")
+                arg))
+            args))
+
+        (Evaluation
+          pred
+          (List new-args))))
+    orig-eval)
+)
+
+(define (replace-i-and-we-with-you evals)
+  (map eval-replace-i-and-we-with-you evals))
 
 ;; Temp hack to workaround sureal bug for Eval's without List for args
 (define (add-list-to-eval eval)
