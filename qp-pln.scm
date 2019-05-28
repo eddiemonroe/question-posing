@@ -32,11 +32,28 @@
   "The man died."
 ))
 
+;; Convert KB Implications to BL rules for reasoning
+;; Todo: We will need a more opticmal way to do this with the full KB
 (pln-load-meta-rules "predicate/conditional-full-instantiation")
-; (define rule-base (ConceptNode "qp-rule-base"))
-; (ure-define-rbs rule-base 10)
-; (ure-set-fuzzy-bool-parameter rule-base "URE:attention-allocation" 0)
+(define kb-rules
+  (cog-execute! conditional-full-instantiation-implication-scope-meta-rule))
 
+;; Add the KB rules to the rule base
+(define qp-rbs (ConceptNode "qp-rule-base"))
+(ure-define-rbs qp-rbs 10)
+(ure-set-fuzzy-bool-parameter qp-rbs "URE:attention-allocation" 0)
+(for-each
+  (lambda (bind-link)
+    (ure-define-add-rule
+      qp-rbs
+      (string-append "kb-rule-" (random-string 10))
+      bind-link
+      (stv 1 1)))
+  (cog-outgoing-set kb-rules))
+
+
+;; This is the main function that converts input text to potential response
+;; questions.
 (define (questions-for-utterance text)
   (define kb-conclusions '())
   (define questions '())
@@ -73,13 +90,10 @@
 )
 
 (define (conclusions-for-utter-logic utter-logic)
-  ;; For now, load the "standard" pln rule base
-  ; (pln-load)
-(display "AND HERE TOO\n")
-  ;; Results in BL's for every ImplicationScope in the KB
-  ;; Todo: We will need a more opticmal way to do this with the full KB
-  (meta-bind conditional-full-instantiation-implication-scope-meta-rule)
-  ; (format #t "kb-conclusions:\n~a\n" kb-conclusions)
+  ;; Forward chaining
+  (define conclusions (cog-fc qp-rbs (Set utter-logic)))
+  (format #t "fc conclusions:\n~a\n" conclusions)
+  conclusions
 )
 
 ;; Temp hack to workaround sureal bug for Eval's without List for args
