@@ -32,6 +32,11 @@
   "The man died."
 ))
 
+(pln-load-meta-rules "predicate/conditional-full-instantiation")
+; (define rule-base (ConceptNode "qp-rule-base"))
+; (ure-define-rbs rule-base 10)
+; (ure-set-fuzzy-bool-parameter rule-base "URE:attention-allocation" 0)
+
 (define (questions-for-utterance text)
   (define kb-conclusions '())
   (define questions '())
@@ -69,7 +74,7 @@
 
 (define (conclusions-for-utter-logic utter-logic)
   ;; For now, load the "standard" pln rule base
-  (pln-load)
+  ; (pln-load)
 (display "AND HERE TOO\n")
   ;; Results in BL's for every ImplicationScope in the KB
   ;; Todo: We will need a more opticmal way to do this with the full KB
@@ -91,7 +96,10 @@
 ;; Shortcuts for testing
 
 (define q questions-for-utterance)
+(define text (car utterances))
 
+(define (test)
+  (for-each questions-for-utterance utterances))
 
 
 
