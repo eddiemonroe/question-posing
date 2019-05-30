@@ -18,7 +18,8 @@
 (load "rules.scm")
 
 (define (text-get-sent text)
-  ;; Todo: handle multipes sentences returned by nlp-parse. (Does that every happen?)
+  ;; Todo: handle multipes sentences returned by nlp-parse. (Does that ever
+  ;; happen?)
   (car (nlp-parse text)))
 
 ;; Gets a single (the first) interpretation of a text input
@@ -32,6 +33,8 @@
   (define focus-set (text-get-r2l-output text))
   (apply-r2l-abstract-rules-to-focus-set focus-set))
 
+(define (text-get-relex text)
+  (parse-get-relex-outputs (car (sentence-get-parses (nlp-parse text)))))
 
 (define (apply-rule-to-focus-set rule focus-set)
 "
@@ -93,12 +96,14 @@
 
 
 
-;; Notes the below relies on get-abstract-version in relex2logic/post-processing.scm.
-;; That procedure intentially does not abstract definite nouns, so is probably not
-;; useful for the present purposes. E.g., For "He saw the movie." 'movie' does
-;; not get abstacted, but for "He saw a movie." 'movie' does get abstracted. Note
-;; also that pronouns never get abstracted. Potential solution: include all or
-;; some definites in a similar function. Or use a BL rule based approach.
+;; Notes the below relies on get-abstract-version in
+;; relex2logic/post-processing.scm.
+;; That procedure intentially does not abstract definite nouns, so is probably
+;; not useful for the present purposes. E.g., For "He saw the movie." 'movie'
+;; does not get abstacted, but for "He saw a movie." 'movie' does get
+;; abstracted. Note also that pronouns never get abstracted. Potential solution:
+;; include all or some definites in a similar function. Or use a BL rule based
+;; approach.
 (define (text-get-canned-abstract-version text)
 (let* ([sent (text-get-sent text)]
   [interps (sent-get-interp sent)])

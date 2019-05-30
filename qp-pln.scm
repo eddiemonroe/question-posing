@@ -74,12 +74,12 @@
 
     ;; PLN reasoning to derive knowledge-based conclusions from utterance
     (set! kb-conclusions (conclusions-for-utter-logic utter-logic))
-    (display "YOU ARE HERE\n")
+    ; (display "YOU ARE HERE\n")
 
     ;; Wrap Predicate args in List where needed for sureal bug
     (set! kb-conclusions
       (map add-list-to-eval (cog-outgoing-set kb-conclusions)))
-    (format #t "kb-conclusions 1:\n~a\n" kb-conclusions)
+    (format #t "kb-conclusions:\n~a\n" kb-conclusions)
 
     ; Generate the responses with SuReal
     (set! questions
@@ -91,6 +91,40 @@
   ;; return empty list because logic for utterance is null
   '())
 )
+
+(define (sent-get-tense sentence)
+  (define (bl-for-sent sent)
+    (Bind
+      (VariableList
+        (TypedVariableLink
+          (Variable "$word-instance")
+          (TypeNode "WordInstanceNode"))
+        (TypedVariableLink
+          (Variable "$dlc")
+          (TypeNode "DefinedLinguisticConceptNode"))
+        (TypedVariableLink
+          (Variable "$parse")
+          (TypeNode "ParseNode"))
+      )
+      (And
+        (ParseLink
+          (Variable "$parse")
+          sentence)
+        (WordInstanceLink
+          (Variable "$word-instance")
+          (Variable "$parse"))
+        (TenseLink
+          (Variable "$word-instance")
+          (Variable "$dlc")))
+      (Variable "$dlc")))
+
+  (let* ((sentence
+          (if (list? sentence)
+            (car sentence)
+            sentence))
+         (bl (bl-for-sent sentence))
+         (results (cog-execute! bl)))
+    (gar results)))
 
 (define (conclusions-for-utter-logic utter-logic)
   ;; Forward chaining
@@ -111,7 +145,6 @@
       (let* ((pred (gar orig-eval))
              (args (cog-outgoing-set (gdr orig-eval)))
              (new-args '()))
-; (format "subst args: ~a" )
         (set! new-args
           (map
             (lambda (arg)
