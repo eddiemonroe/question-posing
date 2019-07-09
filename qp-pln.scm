@@ -61,6 +61,9 @@
   ;; Transorm utterance text to abastact logical atomese form
   (define utter-logic (text-get-r2l-abstract text))
 
+  (define tense (sent-get-tense (get-last-said-sent)))
+  (format #t "\ntense: ~a" tense)
+
   (if (not (null? utter-logic)) (begin
     ;; Temp hacky way to convert "I" Concepts to "you"
     (set! utter-logic (replace-i-and-we-with-you utter-logic))
@@ -84,11 +87,15 @@
     ; Generate the responses with SuReal
     (set! questions
       (append-map
-        sureal-for-logic
+        ; sureal-for-logic
+        (lambda (kb-conclusion)
+          ; (sureal-for-logic kb-conclusion tense))
+          (sureal-for-logic kb-conclusion))
         kb-conclusions))
 
-    (format #t "generated questions:\n~a\n" questions))
-  ;; return empty list because logic for utterance is null
+    (format #t "generated questions:\n~a\n" questions)
+    questions)
+  ;; return empty list when logic for utterance is null
   '())
 )
 

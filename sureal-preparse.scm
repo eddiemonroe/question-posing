@@ -21,3 +21,9 @@
 (nlp-parse "popcorn")
 
 (nlp-parse "Did Rich cry?")
+
+
+
+; (nlp-parse "Are you relaxed?")
+; (nlp-parse "Are you amused?")
+; (nlp-parse "Are you entertained?")

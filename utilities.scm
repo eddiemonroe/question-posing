@@ -124,14 +124,24 @@
 ; Sureal utilities
 
 ;; Sureal sentence generation for atomese logic representation
-(define (sureal-for-logic logic)
+(define (sureal-for-logic logic . tense)
+  (define pred (gar logic))
+  ; (format #t "\nsureal-for-logic  logic: ~a\n tense:~a\n" logic tense)
+  (if (null? tense)
+    (set! tense (DefinedLinguisticConceptNode "present")))
+    ; (format #t "\nsureal-for-logic  logic: ~a\n tense:~a\n" logic tense)
   (if (not (null? logic))
     (sureal
       (Set
         logic
         (Inheritance
+          pred
+          tense)
+        (Inheritance
           (InterpretationNode "")
-          (DefinedLinguisticConcept "TruthQuerySpeechAct"))))
+          (DefinedLinguisticConcept "TruthQuerySpeechAct"))
+      )
+    )
     '()))
 
 (define (sureal-for-text text)
