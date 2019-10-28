@@ -51,7 +51,7 @@
   ; (define results)
   (define orig-as (cog-atomspace))
   (define results (begin
-    (cog-cp focus-set temp-as)
+    (cog-cp temp-as focus-set)
     (cog-set-atomspace! temp-as)
     (cog-execute! rule)))
 
@@ -126,14 +126,15 @@
 ;; Sureal sentence generation for atomese logic representation
 (define (sureal-for-logic logic . tense)
   (define pred (gar logic))
-  ; (format #t "\nsureal-for-logic  logic: ~a\n tense:~a\n" logic tense)
+  ; (format #t "\nsureal-for-logic  logic: ~a\ntense:~a\n" logic tense)
   (if (null? tense)
     (set! tense (DefinedLinguisticConceptNode "present")))
-    ; (format #t "\nsureal-for-logic  logic: ~a\n tense:~a\n" logic tense)
+  (format #t "\nsureal-for-logic  logic: ~a\ntense:~a\n" logic tense)
   (if (not (null? logic))
     (sureal
       (Set
         logic
+        ; hmmm, is the tense Inheritance causing no results sometimes?
         (Inheritance
           pred
           tense)
@@ -148,6 +149,9 @@
   (sureal-for-logic (text-get-r2l-abstract text)))
 
 ;--------------------------------------
+; For development
+; (define (sureal-set )
+
 ; Shortcuts for development
 (define abs text-get-r2l-abstract)
 (define out text-get-r2l-output)
