@@ -24,6 +24,8 @@
 
 
 
-; (nlp-parse "Are you relaxed?")
-; (nlp-parse "Are you amused?")
-; (nlp-parse "Are you entertained?")
+ (nlp-parse "Are you relaxed?")
+ (nlp-parse "Are you amused?")
+ (nlp-parse "Are you entertained?")
+ (nlp-parse "Do you cry?")
+ (nlp-parse "Do you eat popcorn?")

@@ -29,7 +29,7 @@
 ;; Todo: Handle multiple sentence interpretations
 (define utterances (list
   "I watched a movie"
-  "The man died."
+;  "The man died."
 ))
 
 ;; Convert KB Implications to BL rules for reasoning
@@ -62,6 +62,8 @@
   (define utter-logic (text-get-r2l-abstract text))
 
   (define tense (sent-get-tense (get-last-said-sent)))
+
+  (format #t "\nutter-logic: ~a" utter-logic)
   (format #t "\ntense: ~a" tense)
 
   (if (not (null? utter-logic)) (begin
